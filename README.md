@@ -1,25 +1,40 @@
-This is the [assistant-ui](https://github.com/Yonom/assistant-ui) starter project.
+# PatientFlow
 
-## Getting Started
+Agentic Clinical Assistant
 
-First, add your OpenAI API key to `.env.local` file:
+## Overview
 
+Uses 2 user-facing agents, one for the patient in `api/p/chat` and `api/chat` for the doctor. The patient agent is a simple chat agent that can ask questions and get answers. The doctor agent is a more complex agent that can ask questions, get answers, and also perform actions on the patient's data and interact with PostgreSQL database.
+
+## Installation
+
+- Clone the repository
+- Install the required packages
+
+```bash
+npm install
 ```
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+- Create a `.env` file in the root directory and add the following environment variables:
+
+```env
+OPENAI_API_KEY=sk-...
+LOOPS_API_KEY=<your_loops_api_key>
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+DATABASE_URL="postgresql://..."
 ```
 
-Then, run the development server:
+- Create a PostgreSQL database and update the `DATABASE_URL` in the `.env` file with your database connection string.
+- Run the following command to create the database tables:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+- Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Open your browser and go to `http://localhost:3000` to see the application in action.
