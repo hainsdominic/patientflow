@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Use an environment variable for the connection string
+}
+
+model QuestionnaireSession {
+  id                   String   @id @default(uuid())
+  patientName          String
+  patientEmail         String
+  questionnaireTitle   String
+  questionnaireContent String
+  linkToken            String   @unique
+  messages             Json?
+  summary              String?
+  status               String   @default("pending")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model MemoryItem {
+  id        String   @id @default(uuid())
+  hint      String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SystemPrompt {
+  id        String   @id @default(uuid())
+  content   String
+  key       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CompletedClinicalReport {
+  id            String   @id @default(uuid())
+  patientName   String
+  patientEmail  String
+  reportTitle   String
+  reportContent String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
