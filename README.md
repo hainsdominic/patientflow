@@ -18,7 +18,7 @@ npm install
 - Create a `.env` file in the root directory and add the following environment variables:
 
 ```env
-OPENAI_API_KEY=sk-...
+GOOGLE_GENERATIVE_AI_API_KEY=<your_google_ai_studio_api_key>
 LOOPS_API_KEY=<your_loops_api_key>
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 DATABASE_URL="postgresql://..."

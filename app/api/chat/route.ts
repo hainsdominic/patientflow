@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { LoopsClient } from 'loops';
 import { getSystemPrompt } from '@/lib/system';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 
 export const maxDuration = 30;
 
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const system = await getSystemPrompt('clinician');
 
   const result = streamText({
-    model: openai('gpt-4o'),
+    model: google('gemini-2.5-flash-preview-04-17'),
     messages,
     system,
     tools: {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
           'Create a new session for the questionnaire, use clinicalAsset to get the right questionnaire',
         parameters: z.object({
           patientName: z.string(),
-          patientEmail: z.string().email(),
+          patientEmail: z.string().describe('Email address of the patient'),
           questionnaireTitle: z
             .string()
             .describe(
@@ -63,23 +63,12 @@ export async function POST(req: Request) {
       sendQuestionnaireSessionInvite: tool({
         description: 'Send an invite to the questionnaire session',
         parameters: z.object({
-          questionnaireSessionUrl: z.string().url(),
-          patientEmail: z.string().email(),
-          sendAt: z
-            .date()
-            .optional()
-            .describe(
-              'The date to send the questionnaire, mainly used for follow-ups'
-            ),
+          questionnaireSessionUrl: z
+            .string()
+            .describe('URL to the questionnaire session'),
+          patientEmail: z.string().describe('Email address of the patient'),
         }),
-        execute: async ({ questionnaireSessionUrl, patientEmail, sendAt }) => {
-          if (sendAt) {
-            console.log(
-              `Questionnaire session invite scheduled to be sent to ${patientEmail} on ${sendAt}`
-            );
-            return `Questionnaire session invite scheduled to be sent to ${patientEmail} on ${sendAt}`;
-          }
-
+        execute: async ({ questionnaireSessionUrl, patientEmail }) => {
           const res = await loops.sendTransactionalEmail({
             transactionalId: 'cm7xlfnj505v1jq2mup2ngxmt',
             email: patientEmail,
@@ -244,7 +233,7 @@ export async function POST(req: Request) {
         description: 'Save a completed clinical report',
         parameters: z.object({
           patientName: z.string(),
-          patientEmail: z.string().email(),
+          patientEmail: z.string().describe('Email address of the patient'),
           reportTitle: z
             .string()
             .describe(

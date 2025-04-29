@@ -1,5 +1,5 @@
 import prisma from '@/lib/db';
-import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 import { streamText, tool } from 'ai';
 import { z } from 'zod';
 
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const { messages, system } = await req.json();
 
   const result = streamText({
-    model: openai('gpt-4o'),
+    model: google('gemini-2.5-flash-preview-04-17'),
     messages,
     system,
     tools: {
