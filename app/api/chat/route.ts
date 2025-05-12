@@ -1,5 +1,6 @@
 import prisma from '@/lib/db';
 import { streamText, tool } from 'ai';
+import { auth } from '@/app/auth';
 import { z } from 'zod';
 import { v4 as uuidv4 } from 'uuid';
 import { LoopsClient } from 'loops';
@@ -11,6 +12,13 @@ export const maxDuration = 30;
 const loops = new LoopsClient(process.env.LOOPS_API_KEY as string);
 
 export async function POST(req: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
   const { messages } = await req.json();
 
   const system = await getSystemPrompt('clinician');
@@ -55,6 +63,7 @@ export async function POST(req: Request) {
               questionnaireTitle,
               questionnaireContent,
               linkToken: uuidv4(),
+              userId,
             },
           });
           return `Questionnaire session created for ${patientName} (${patientEmail})`;
@@ -102,7 +111,11 @@ export async function POST(req: Request) {
         parameters: z.object({}),
         execute: async () => {
           console.log('Getting all questionnaire sessions');
-          const sessions = await prisma.questionnaireSession.findMany();
+          const sessions = await prisma.questionnaireSession.findMany({
+            where: {
+              userId,
+            },
+          });
           return sessions;
         },
       }),
@@ -128,6 +141,9 @@ export async function POST(req: Request) {
         execute: async () => {
           console.log('Getting all available assets header');
           const assets = await prisma.memoryItem.findMany({
+            where: {
+              userId,
+            },
             select: {
               id: true,
               hint: true,
@@ -154,6 +170,7 @@ export async function POST(req: Request) {
                 title,
               }),
               content,
+              userId,
             },
           });
           return asset;
@@ -170,6 +187,7 @@ export async function POST(req: Request) {
           const asset = await prisma.memoryItem.findUnique({
             where: {
               id,
+              userId,
             },
           });
           return asset;
@@ -185,6 +203,7 @@ export async function POST(req: Request) {
           await prisma.memoryItem.delete({
             where: {
               id,
+              userId,
             },
           });
           return `Clinical asset deleted for ${id}`;
@@ -254,12 +273,18 @@ export async function POST(req: Request) {
             patientName,
             patientEmail
           );
+          console.log(
+            'Saving completed clinical report for',
+            patientName,
+            patientEmail
+          );
           const report = await prisma.completedClinicalReport.create({
             data: {
               patientName,
               patientEmail,
               reportTitle,
               reportContent,
+              userId,
             },
           });
           return report;
@@ -272,6 +297,9 @@ export async function POST(req: Request) {
         execute: async () => {
           console.log('Getting all completed clinical reports headers');
           const reports = await prisma.completedClinicalReport.findMany({
+            where: {
+              userId,
+            },
             select: {
               id: true,
               reportTitle: true,
@@ -293,6 +321,7 @@ export async function POST(req: Request) {
           const report = await prisma.completedClinicalReport.findUnique({
             where: {
               id,
+              userId,
             },
           });
           return report;

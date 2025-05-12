@@ -19,6 +19,8 @@ model QuestionnaireSession {
   status               String   @default("pending")
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id])
 }
 
 model MemoryItem {
@@ -27,6 +29,8 @@ model MemoryItem {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model SystemPrompt {
@@ -35,6 +39,8 @@ model SystemPrompt {
   key       String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model CompletedClinicalReport {
@@ -45,4 +51,18 @@ model CompletedClinicalReport {
   reportContent String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id                       String                    @id @default(cuid())
+  username                 String                    @db.VarChar(255)
+  password                 String?                   @db.VarChar(255)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  questionnaireSessions    QuestionnaireSession[]
+  memoryItems              MemoryItem[]
+  completedClinicalReports CompletedClinicalReport[]
+  systemPrompts            SystemPrompt[]
 }
