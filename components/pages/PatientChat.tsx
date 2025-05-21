@@ -12,9 +12,11 @@ import { useState } from 'react';
 export default function PatientChat({
   linkToken,
   system,
+  greetingMessage,
 }: {
   linkToken: string;
   system: string;
+  greetingMessage: string;
 }) {
   const [chatEnded, setChatEnded] = useState(false);
 
@@ -33,8 +35,7 @@ export default function PatientChat({
       },
       {
         role: 'assistant',
-        content:
-          'Hi, I am an assistant. I will be asking you questions from a questionnaire. Please answer them to the best of your ability. Let us begin by replying yes',
+        content: greetingMessage,
       },
     ],
     onFinish(message) {

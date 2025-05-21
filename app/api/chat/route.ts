@@ -44,12 +44,18 @@ export async function POST(req: Request) {
             .describe(
               'The content of the questionnaire, found in the content of the clinicalAsset'
             ),
+          greetingMessage: z
+            .string()
+            .describe(
+              'The greeting message to show to the patient, check your system prompt for guidance'
+            ),
         }),
         execute: async ({
           patientName,
           patientEmail,
           questionnaireTitle,
           questionnaireContent,
+          greetingMessage,
         }) => {
           console.log(
             'Creating questionnaire session for',
@@ -64,6 +70,7 @@ export async function POST(req: Request) {
               questionnaireContent,
               linkToken: uuidv4(),
               userId,
+              greetingMessage,
             },
           });
           return `Questionnaire session created for ${patientName} (${patientEmail})`;
