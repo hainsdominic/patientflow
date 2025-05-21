@@ -327,6 +327,17 @@ export async function POST(req: Request) {
           return report;
         },
       }),
+      printContent: tool({
+        description:
+          'Export the content as html for printing, it will be put inside a div with class html-content, and the button to print will be shown',
+        parameters: z.object({
+          html: z.string(),
+        }),
+        execute: async ({ html }) => {
+          console.log('Printing content');
+          return html;
+        },
+      }),
     },
     maxSteps: 10,
     maxRetries: 3,

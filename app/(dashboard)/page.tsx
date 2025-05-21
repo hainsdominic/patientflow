@@ -8,6 +8,7 @@ import {
   SimpleTextAttachmentAdapter,
 } from '@assistant-ui/react';
 import { SendQuestionnaireSessionToolUI } from '@/components/tools/SendQuestionnaireSessionInviteToolUI';
+import { PrintContentToolUI } from '@/components/tools/PrintContentToolUI';
 
 export default function Home() {
   const runtime = useChatRuntime({
@@ -23,6 +24,7 @@ export default function Home() {
   return (
     <AssistantRuntimeProvider runtime={runtime}>
       <SendQuestionnaireSessionToolUI />
+      <PrintContentToolUI />
       <main className='h-[calc(100dvh-4rem)] w-full px-4 py-4'>
         <Thread />
       </main>
