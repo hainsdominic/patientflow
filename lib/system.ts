@@ -35,9 +35,10 @@ export async function setSystemPrompt(
     throw new Error('User not authenticated');
   }
   const userId = session.user.id;
+  console.log('uesrId', userId);
   await prisma.systemPrompt.upsert({
     where: {
-      key,
+      user_prompt_unique: { userId, key },
     },
     create: {
       key,
