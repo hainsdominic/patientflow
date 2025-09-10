@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const system = await getSystemPrompt('clinician');
 
   const result = streamText({
-    model: google('gemini-2.5-pro-exp-03-25'),
+    model: google('gemini-2.5-pro'),
     messages,
     system,
     tools: {
